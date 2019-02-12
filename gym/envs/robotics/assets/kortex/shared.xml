@@ -1,0 +1,50 @@
+<mujoco>
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.44 0.85 0.56" rgb2="0.46 0.87 0.58" width="32" height="32"></texture>
+        <texture name="texture_block" file="block.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
+
+        <material name="floor_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
+        <material name="table_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.93 0.93 0.93 1"></material>
+        <material name="block_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
+        <material name="puck_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
+
+        <mesh name="robot0:base_link" file="base_link.STL" />
+        <mesh name="robot0:shoulder_link" file="Shoulder_Link.STL" />
+        <mesh name="robot0:halfarm1_link" file="HalfArm1_Link.STL" />
+        <mesh name="robot0:halfarm2_link" file="HalfArm2_Link.STL" />
+        <mesh name="robot0:forearm_link" file="ForeArm_Link.STL" />
+        <mesh name="robot0:wrist1_link" file="Wrist1_Link.STL" />
+        <mesh name="robot0:wrist2_link" file="Wrist2_Link.STL" />
+        <mesh name="robot0:bracelet_link" file="Bracelet_Link.STL" />
+        <mesh name="robot0:gripper_link" file="base.stl" scale="0.001 0.001 0.001" />
+        <mesh name="robot0:gripper_driver_link" file="driver.stl" scale="0.001 0.001 0.001" />
+        <mesh name="robot0:gripper_coupler_link" file="coupler.stl" scale="0.001 0.001 0.001" />
+        <mesh name="robot0:gripper_follower_link" file="follower.stl" scale="0.001 0.001 0.001" />
+        <mesh name="robot0:gripper_pad_link" file="pad.stl" scale="0.001 0.001 0.001" />
+        <mesh name="robot0:gripper_spring_link" file="spring_link.stl" scale="0.001 0.001 0.001" />
+        
+    </asset>
+
+    <equality>
+        <weld body1="robot0:mocap" body2="robot0:gripper_link" solimp="0.9 0.95 0.001" solref="0.02 1"></weld>
+    </equality>
+    
+    <!--
+    <contact>
+        <exclude body1="robot0:r_gripper_finger_link" body2="robot0:l_gripper_finger_link"></exclude>
+        <exclude body1="robot0:torso_lift_link" body2="robot0:torso_fixed_link"></exclude>
+        <exclude body1="robot0:torso_lift_link" body2="robot0:shoulder_pan_link"></exclude>
+    </contact>
+
+    -->
+    
+    <default>
+        <default class="robot0:fetch">
+            <geom margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" type="mesh" user="0"></geom>
+            
+            <default class="robot0:fetchGripper">
+                <geom margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" type="mesh" user="0"></geom>
+            </default>
+        </default>
+    </default>
+</mujoco>

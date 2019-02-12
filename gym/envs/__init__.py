@@ -333,6 +333,14 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=50,
     )
 
+    # Kortex
+    register(
+        id='KortexReach{}-v0'.format(suffix),
+        entry_point='gym.envs.robotics:KortexReachEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )
+
     # Hand
     register(
         id='HandReach{}-v0'.format(suffix),
