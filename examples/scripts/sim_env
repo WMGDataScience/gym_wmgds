@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import gym
-from gym import spaces, envs
+import gym_wmgds
+from gym_wmgds import spaces, envs
 import argparse
 import numpy as np
 import itertools

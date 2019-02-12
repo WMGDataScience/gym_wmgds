@@ -1,4 +1,4 @@
-# gym
+# gym_wmgds
 
 The MIT License
 

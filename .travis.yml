@@ -9,8 +9,8 @@ env:
 
 install: "" # so travis doesn't do pip install requirements.txt
 script:
-  - docker build -f test.dockerfile.${UBUNTU_VER} -t gym-test --build-arg MUJOCO_KEY=$MUJOCO_KEY .
-  - docker run gym-test
+  - docker build -f test.dockerfile.${UBUNTU_VER} -t gym_wmgds-test --build-arg MUJOCO_KEY=$MUJOCO_KEY .
+  - docker run gym_wmgds-test
 
 deploy:
     provider: pypi

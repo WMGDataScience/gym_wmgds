@@ -1,25 +1,25 @@
 **Status:** Maintenance (expect bug fixes and minor updates)
 
-OpenAI Gym
+OpenAI gym_wmgds
 **********
 
-**OpenAI Gym is a toolkit for developing and comparing reinforcement learning algorithms.** This is the ``gym`` open-source library, which gives you access to a standardized set of environments.
+**OpenAI gym_wmgds is a toolkit for developing and comparing reinforcement learning algorithms.** This is the ``gym_wmgds`` open-source library, which gives you access to a standardized set of environments.
 
-.. image:: https://travis-ci.org/openai/gym.svg?branch=master
-    :target: https://travis-ci.org/openai/gym
+.. image:: https://travis-ci.org/openai/gym_wmgds.svg?branch=master
+    :target: https://travis-ci.org/openai/gym_wmgds
 
 `See What's New section below <#what-s-new>`_
 
-``gym`` makes no assumptions about the structure of your agent, and is compatible with any numerical computation library, such as TensorFlow or Theano. You can use it from Python code, and soon from other languages.
+``gym_wmgds`` makes no assumptions about the structure of your agent, and is compatible with any numerical computation library, such as TensorFlow or Theano. You can use it from Python code, and soon from other languages.
 
 If you're not sure where to start, we recommend beginning with the
-`docs <https://gym.openai.com/docs>`_ on our site. See also the `FAQ <https://github.com/openai/gym/wiki/FAQ>`_.
+`docs <https://gym_wmgds.openai.com/docs>`_ on our site. See also the `FAQ <https://github.com/openai/gym_wmgds/wiki/FAQ>`_.
 
-A whitepaper for OpenAI Gym is available at http://arxiv.org/abs/1606.01540, and here's a BibTeX entry that you can use to cite it in a publication::
+A whitepaper for OpenAI gym_wmgds is available at http://arxiv.org/abs/1606.01540, and here's a BibTeX entry that you can use to cite it in a publication::
 
   @misc{1606.01540,
     Author = {Greg Brockman and Vicki Cheung and Ludwig Pettersson and Jonas Schneider and John Schulman and Jie Tang and Wojciech Zaremba},
-    Title = {OpenAI Gym},
+    Title = {OpenAI gym_wmgds},
     Year = {2016},
     Eprint = {arXiv:1606.01540},
   }
@@ -36,7 +36,7 @@ algorithm you are writing). The agent sends `actions` to the
 environment, and the environment replies with `observations` and
 `rewards` (that is, a score).
 
-The core `gym` interface is `Env <https://github.com/openai/gym/blob/master/gym/core.py>`_, which is
+The core `gym_wmgds` interface is `Env <https://github.com/openai/gym_wmgds/blob/master/gym_wmgds/core.py>`_, which is
 the unified environment interface. There is no interface for agents;
 that part is left to you. The following are the ``Env`` methods you
 should know:
@@ -48,19 +48,19 @@ should know:
 Installation
 ============
 
-You can perform a minimal install of ``gym`` with:
+You can perform a minimal install of ``gym_wmgds`` with:
 
 .. code:: shell
 
-    git clone https://github.com/openai/gym.git
-    cd gym
+    git clone https://github.com/openai/gym_wmgds.git
+    cd gym_wmgds
     pip install -e .
 
 If you prefer, you can do a minimal install of the packaged version directly from PyPI:
 
 .. code:: shell
 
-    pip install gym
+    pip install gym_wmgds
 
 You'll be able to run a few environments right away:
 
@@ -114,7 +114,7 @@ the
 `instructions <https://github.com/openai/mujoco-py#obtaining-the-binaries-and-license-key>`_
 in the ``mujoco-py`` package for help.
 
-Once you're ready to install everything, run ``pip install -e '.[all]'`` (or ``pip install 'gym[all]'``).
+Once you're ready to install everything, run ``pip install -e '.[all]'`` (or ``pip install 'gym_wmgds[all]'``).
 
 Supported systems
 -----------------
@@ -125,8 +125,8 @@ We currently support Linux and OS X running Python 2.7 or 3.5. Some users on OSX
 
     brew install boost-python --with-python3
 
-If you want to access Gym from languages other than python, we have limited support for non-python
-frameworks, such as lua/Torch, using the OpenAI Gym `HTTP API <https://github.com/openai/gym-http-api>`_.
+If you want to access gym_wmgds from languages other than python, we have limited support for non-python
+frameworks, such as lua/Torch, using the OpenAI gym_wmgds `HTTP API <https://github.com/openai/gym_wmgds-http-api>`_.
 
 Pip version
 -----------
@@ -135,7 +135,7 @@ To run ``pip install -e '.[all]'``, you'll need a semi-recent pip.
 Please make sure your pip is at least at version ``1.5.0``. You can
 upgrade using the following: ``pip install --ignore-installed
 pip``. Alternatively, you can open `setup.py
-<https://github.com/openai/gym/blob/master/setup.py>`_ and
+<https://github.com/openai/gym_wmgds/blob/master/setup.py>`_ and
 install the dependencies by hand.
 
 Rendering on a server
@@ -154,17 +154,17 @@ Installing dependencies for specific environments
 
 If you'd like to install the dependencies for only specific
 environments, see `setup.py
-<https://github.com/openai/gym/blob/master/setup.py>`_. We
+<https://github.com/openai/gym_wmgds/blob/master/setup.py>`_. We
 maintain the lists of dependencies on a per-environment group basis.
 
 Environments
 ============
 
 The code for each environment group is housed in its own subdirectory
-`gym/envs
-<https://github.com/openai/gym/blob/master/gym/envs>`_. The
-specification of each task is in `gym/envs/__init__.py
-<https://github.com/openai/gym/blob/master/gym/envs/__init__.py>`_. It's
+`gym_wmgds/envs
+<https://github.com/openai/gym_wmgds/blob/master/gym_wmgds/envs>`_. The
+specification of each task is in `gym_wmgds/envs/__init__.py
+<https://github.com/openai/gym_wmgds/blob/master/gym_wmgds/envs/__init__.py>`_. It's
 worth browsing through both.
 
 Algorithmic
@@ -175,8 +175,8 @@ sequence.
 
 .. code:: python
 
-    import gym
-    env = gym.make('Copy-v0')
+    import gym_wmgds
+    env = gym_wmgds.make('Copy-v0')
     env.reset()
     env.render()
 
@@ -187,8 +187,8 @@ The Atari environments are a variety of Atari video games. If you didn't do the 
 
 .. code:: python
 
-    import gym
-    env = gym.make('SpaceInvaders-v0')
+    import gym_wmgds
+    env = gym_wmgds.make('SpaceInvaders-v0')
     env.reset()
     env.render()
 
@@ -201,8 +201,8 @@ Box2d is a 2D physics engine. You can install it via  ``pip install -e '.[box2d]
 
 .. code:: python
 
-    import gym
-    env = gym.make('LunarLander-v2')
+    import gym_wmgds
+    env = gym_wmgds.make('LunarLander-v2')
     env.reset()
     env.render()
 
@@ -213,8 +213,8 @@ These are a variety of classic control tasks, which would appear in a typical re
 
 .. code:: python
 
-    import gym
-    env = gym.make('CartPole-v0')
+    import gym_wmgds
+    env = gym_wmgds.make('CartPole-v0')
     env.reset()
     env.render()
 
@@ -229,8 +229,8 @@ to set it up. You'll have to also run ``pip install -e '.[mujoco]'`` if you didn
 
 .. code:: python
 
-    import gym
-    env = gym.make('Humanoid-v2')
+    import gym_wmgds
+    env = gym_wmgds.make('Humanoid-v2')
     env.reset()
     env.render()
 
@@ -246,8 +246,8 @@ to set it up. You'll have to also run ``pip install -e '.[robotics]'`` if you di
 
 .. code:: python
 
-    import gym
-    env = gym.make('HandManipulateBlock-v0')
+    import gym_wmgds
+    env = gym_wmgds.make('HandManipulateBlock-v0')
     env.reset()
     env.render()
 
@@ -268,8 +268,8 @@ Toy environments which are text-based. There's no extra dependency to install, s
 
 .. code:: python
 
-    import gym
-    env = gym.make('FrozenLake-v0')
+    import gym_wmgds
+    env = gym_wmgds.make('FrozenLake-v0')
     env.reset()
     env.render()
 
@@ -278,9 +278,9 @@ Examples
 
 See the ``examples`` directory.
 
-- Run `examples/agents/random_agent.py <https://github.com/openai/gym/blob/master/examples/agents/random_agent.py>`_ to run an simple random agent.
-- Run `examples/agents/cem.py <https://github.com/openai/gym/blob/master/examples/agents/cem.py>`_ to run an actual learning agent (using the cross-entropy method).
-- Run `examples/scripts/list_envs <https://github.com/openai/gym/blob/master/examples/scripts/list_envs>`_ to generate a list of all environments.
+- Run `examples/agents/random_agent.py <https://github.com/openai/gym_wmgds/blob/master/examples/agents/random_agent.py>`_ to run an simple random agent.
+- Run `examples/agents/cem.py <https://github.com/openai/gym_wmgds/blob/master/examples/agents/cem.py>`_ to run an actual learning agent (using the cross-entropy method).
+- Run `examples/scripts/list_envs <https://github.com/openai/gym_wmgds/blob/master/examples/scripts/list_envs>`_ to generate a list of all environments.
 
 Testing
 =======
@@ -298,30 +298,30 @@ What's new
 ==========
 
 - 2019-02-06 (v0.11.0)
-    + remove gym.spaces.np_random common PRNG; use per-instance PRNG instead.
-    + support for kwargs in gym.make
+    + remove gym_wmgds.spaces.np_random common PRNG; use per-instance PRNG instead.
+    + support for kwargs in gym_wmgds.make
     + lots of bugfixes
 
 - 2018-02-28: Release of a set of new robotics environments.
-- 2018-01-25: Made some aesthetic improvements and removed unmaintained parts of gym. This may seem like a downgrade in functionality, but it is actually a long-needed cleanup in preparation for some great new things that will be released in the next month.
+- 2018-01-25: Made some aesthetic improvements and removed unmaintained parts of gym_wmgds. This may seem like a downgrade in functionality, but it is actually a long-needed cleanup in preparation for some great new things that will be released in the next month.
 
     + Now your `Env` and `Wrapper` subclasses should define `step`, `reset`, `render`, `close`, `seed` rather than underscored method names.
     + Removed the `board_game`, `debugging`, `safety`, `parameter_tuning` environments since they're not being maintained by us at OpenAI. We encourage authors and users to create new repositories for these environments.
     + Changed `MultiDiscrete` action space to range from `[0, ..., n-1]` rather than `[a, ..., b-1]`.
     + No more `render(close=True)`, use env-specific methods to close the rendering.
     + Removed `scoreboard` directory, since site doesn't exist anymore.
-    + Moved `gym/monitoring` to `gym/wrappers/monitoring`
+    + Moved `gym_wmgds/monitoring` to `gym_wmgds/wrappers/monitoring`
     + Add `dtype` to `Space`.
-    + Not using python's built-in module anymore, using `gym.logger`
+    + Not using python's built-in module anymore, using `gym_wmgds.logger`
 
 - 2018-01-24: All continuous control environments now use mujoco_py >= 1.50.
   Versions have been updated accordingly to -v2, e.g. HalfCheetah-v2. Performance
-  should be similar (see https://github.com/openai/gym/pull/834) but there are likely
+  should be similar (see https://github.com/openai/gym_wmgds/pull/834) but there are likely
   some differences due to changes in MuJoCo.
 - 2017-06-16: Make env.spec into a property to fix a bug that occurs
   when you try to print out an unregistered Env.
 - 2017-05-13: BACKWARDS INCOMPATIBILITY: The Atari environments are now at
-  *v4*. To keep using the old v3 environments, keep gym <= 0.8.2 and atari-py
+  *v4*. To keep using the old v3 environments, keep gym_wmgds <= 0.8.2 and atari-py
   <= 0.0.21. Note that the v4 environments will not give identical results to
   existing v3 results, although differences are minor. The v4 environments
   incorporate the latest Arcade Learning Environment (ALE), including several
@@ -331,10 +331,10 @@ What's new
   The `*NoFrameSkip-v4` environments should be considered the canonical Atari
   environments from now on.
 - 2017-03-05: BACKWARDS INCOMPATIBILITY: The `configure` method has been removed
-  from `Env`. `configure` was not used by `gym`, but was used by some dependent
+  from `Env`. `configure` was not used by `gym_wmgds`, but was used by some dependent
   libraries including `universe`. These libraries will migrate away from the
   configure method by using wrappers instead. This change is on master and will be released with 0.8.0.
-- 2016-12-27: BACKWARDS INCOMPATIBILITY: The gym monitor is now a
+- 2016-12-27: BACKWARDS INCOMPATIBILITY: The gym_wmgds monitor is now a
   wrapper. Rather than starting monitoring as
   `env.monitor.start(directory)`, envs are now wrapped as follows:
   `env = wrappers.Monitor(env, directory)`. This change is on master
@@ -346,8 +346,8 @@ What's new
   underlying env, nor does it record or upload seed information.
 - 2016-10-31: We're experimentally expanding the environment ID format
   to include an optional username.
-- 2016-09-21: Switch the Gym automated logger setup to configure the
-  root logger rather than just the 'gym' logger.
+- 2016-09-21: Switch the gym_wmgds automated logger setup to configure the
+  root logger rather than just the 'gym_wmgds' logger.
 - 2016-08-17: Calling `close` on an env will also close the monitor
   and any rendering windows.
 - 2016-08-17: The monitor will no longer write manifest files in

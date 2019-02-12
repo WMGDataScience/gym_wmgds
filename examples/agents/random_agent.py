@@ -1,8 +1,8 @@
 import argparse
 import sys
 
-import gym
-from gym import wrappers, logger
+import gym_wmgds
+from gym_wmgds import wrappers, logger
 
 class RandomAgent(object):
     """The world's simplest agent!"""
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # want to change the amount of output.
     logger.set_level(logger.INFO)
 
-    env = gym.make(args.env_id)
+    env = gym_wmgds.make(args.env_id)
 
     # You provide the directory to write to (can be an existing
     # directory, including one with existing data -- all monitor files
