@@ -188,14 +188,14 @@ class FetchEnv(robot_env.RobotEnv):
             self.height_offset = self.sim.data.get_site_xpos('object0')[2]
 
 
-class FetchPartialEnv(robot_env.RobotEnv):
+class FetchPartialEnv(robot_env.RobotPartialEnv):
     """Superclass for all Fetch environments.
     """
 
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         has_object, target_in_the_air, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type, max_nb_objects,
+        distance_threshold, initial_qpos, reward_type,
     ):
         """Initializes a new Fetch environment.
 
@@ -222,7 +222,6 @@ class FetchPartialEnv(robot_env.RobotEnv):
         self.target_range = target_range
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
-        self.max_nb_objects = max_nb_objects
         self.nb_objects = 1
 
         super(FetchPartialEnv, self).__init__(
@@ -364,7 +363,6 @@ class FetchPartialEnv(robot_env.RobotEnv):
             object_qpos[:2] = object_xpos
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
         elif self.has_object == 2:
-            self.nb_objects = np.random.randint(1, self.max_nb_objects+1)
             for i_object in range(0, self.nb_objects):
                 object_xpos = self.initial_gripper_xpos[:2]
                 while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
