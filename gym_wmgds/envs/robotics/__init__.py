@@ -4,6 +4,8 @@ from gym_wmgds.envs.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv
 from gym_wmgds.envs.robotics.fetch.push import FetchPushEnv
 from gym_wmgds.envs.robotics.fetch.reach import FetchReachEnv
 
+from gym_wmgds.envs.robotics.fetch.push_partial import FetchPushPartialEnv
+
 from gym_wmgds.envs.robotics.hand.reach import HandReachEnv
 from gym_wmgds.envs.robotics.hand.manipulate import HandBlockEnv
 from gym_wmgds.envs.robotics.hand.manipulate import HandEggEnv
