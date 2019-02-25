@@ -363,14 +363,19 @@ class FetchPartialEnv(robot_env.RobotPartialEnv):
             object_qpos[:2] = object_xpos
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
         elif self.has_object == 2:
+            placement_count = 0
             for i_object in range(0, self.nb_objects):
                 object_xpos = self.initial_gripper_xpos[:2]
                 while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                     object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
+                    placement_count += 1
                     for j_object in range(0, i_object):
-                        if np.linalg.norm(object_xpos - self.sim.data.get_joint_qpos('object' + str(j_object) + ':joint')[:2]) < 0.075:
+                        if np.linalg.norm(object_xpos - self.sim.data.get_joint_qpos('object' + str(j_object) + ':joint')[:2]) < 0.070:
                             object_xpos = self.initial_gripper_xpos[:2]
                             break
+                    if placement_count >= 1000:
+                        print('object placement is ended as maximum number of trials has been reached')
+                        break
                 object_qpos = self.sim.data.get_joint_qpos('object' + str(i_object) + ':joint')
                 assert object_qpos.shape == (7,)
                 object_qpos[:2] = object_xpos
