@@ -77,7 +77,7 @@
 			<joint name="object9:joint" type="free" damping="0.01"></joint>
 			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object9" material="block_false_mat" mass="2"></geom>
 			<site name="object9" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
-		</body> -->
+		</body>
 
 		<light directional="true" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false" pos="0 0 4" dir="0 0 -1" name="light0"></light>
 	</worldbody>
