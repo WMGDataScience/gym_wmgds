@@ -8,7 +8,7 @@ MODEL_XML_PATH = os.path.join('fetch', 'push_multi.xml')
 
 
 class FetchPushMultiEnv(fetch_multi_env.FetchMultiEnv, utils.EzPickle):
-    def __init__(self, reward_type='sparse', n_objects=1, obj_action_type='all'):
+    def __init__(self, reward_type='sparse', n_objects=1, obj_action_type='all', observe_obj_grp=False):
         initial_qpos = {
             'robot0:slide0': 0.405,
             'robot0:slide1': 0.48,
@@ -29,5 +29,5 @@ class FetchPushMultiEnv(fetch_multi_env.FetchMultiEnv, utils.EzPickle):
             gripper_extra_height=0.0, target_in_the_air=False, target_stacked=False, target_offset=0.0,
             obj_range=0.15, target_range=0.15, distance_threshold=0.05,
             initial_qpos=initial_qpos, reward_type=reward_type, 
-            n_objects=n_objects, obj_action_type=obj_action_type)
+            n_objects=n_objects, obj_action_type=obj_action_type, observe_obj_grp=observe_obj_grp)
         utils.EzPickle.__init__(self)

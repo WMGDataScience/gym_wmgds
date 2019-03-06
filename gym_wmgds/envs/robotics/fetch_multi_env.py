@@ -16,7 +16,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         target_in_the_air, target_stacked, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type, n_objects, obj_action_type
+        distance_threshold, initial_qpos, reward_type, n_objects, obj_action_type, observe_obj_grp
     ):
         """Initializes a new Fetch environment.
 
@@ -47,6 +47,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         self.ai_object = False
         self.obj_action_type = obj_action_type
         self.max_n_objects = 5
+        self.observe_obj_grp = observe_obj_grp
 
         if obj_action_type == 'all':
             n_actions = n_objects * 7 + 4
@@ -162,9 +163,11 @@ class FetchMultiEnv(robot_env.RobotEnv):
             object_velp.ravel(), 
             object_velr.ravel(), 
             grip_velp, 
-            gripper_vel,
-            np.asarray([obj_grp])
+            gripper_vel
         ])
+        if self.observe_obj_grp:
+            obs = np.concatenate([obs, np.asarray([obj_grp])])
+
         obs_all.append(obs.copy())
 
         target_pos = self.goal.copy().reshape(self.n_objects,-1)
@@ -187,9 +190,10 @@ class FetchMultiEnv(robot_env.RobotEnv):
             target_velp.ravel(), 
             object_velr.ravel(), 
             np.zeros_like(grip_velp), 
-            np.zeros_like(gripper_vel),
-            np.asarray([i_object])
+            np.zeros_like(gripper_vel)
         ])
+        if self.observe_obj_grp:
+            obs = np.concatenate([obs, np.asarray([obj_grp])])
 
         obs_all.append(obs.copy())
 
