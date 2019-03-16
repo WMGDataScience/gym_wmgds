@@ -355,7 +355,7 @@ for reward_type in ['sparse', 'dense']:
     )    
 
     register(
-        id='FetchPushMulti{}-v1'.format(suffix),
+        id='FetchPickAndPlaceMulti{}-v1'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:FetchPickAndPlaceMultiEnv',
         kwargs=kwargs,
         max_episode_steps=50,
