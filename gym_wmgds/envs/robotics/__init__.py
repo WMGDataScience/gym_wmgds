@@ -11,6 +11,7 @@ from gym_wmgds.envs.robotics.fetch_multi_env import FetchMultiEnv
 from gym_wmgds.envs.robotics.fetch.push_multi import FetchPushMultiEnv
 from gym_wmgds.envs.robotics.fetch.pick_and_place_multi import FetchPickAndPlaceMultiEnv
 from gym_wmgds.envs.robotics.fetch.stack_multi import FetchStackMultiEnv
+from gym_wmgds.envs.robotics.fetch.slide_multi import FetchSlideMultiEnv
 
 from gym_wmgds.envs.robotics.hand.reach import HandReachEnv
 from gym_wmgds.envs.robotics.hand.manipulate import HandBlockEnv
