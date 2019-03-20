@@ -197,6 +197,9 @@ class FetchMultiEnv(robot_env.RobotEnv):
         ])
         if self.observe_obj_grp:
             obs = np.concatenate([obs, np.asarray([obj_grp])])
+        else:
+            # This is just to prevent the problems in the normalization
+            obs = np.concatenate([obs, np.asarray([self.max_n_objects])])
 
         obs_all.append(obs.copy())
 
