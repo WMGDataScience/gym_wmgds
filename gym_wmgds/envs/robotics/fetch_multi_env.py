@@ -49,18 +49,12 @@ class FetchMultiEnv(robot_env.RobotEnv):
         self.max_n_objects = 5
         self.observe_obj_grp = observe_obj_grp
 
-        if obj_action_type == 'all':
-            n_actions = n_objects * 7 + 4
-        elif obj_action_type == 'slide_only':
-            n_actions = n_objects * 3 + 4
-        elif obj_action_type == 'rotation_only':
-            n_actions = n_objects * 4 + 4
-        self.n_actions = n_actions
+        self.n_actions = n_objects * len(obj_action_type) + 4
 
         self.initial_qpos = initial_qpos
 
         super(FetchMultiEnv, self).__init__(
-            model_path=model_path, n_substeps=n_substeps, n_actions=n_actions,
+            model_path=model_path, n_substeps=n_substeps, n_actions=self.n_actions,
             initial_qpos=initial_qpos)
 
     # GoalEnv methods
@@ -90,14 +84,11 @@ class FetchMultiEnv(robot_env.RobotEnv):
         action_obj = action[4:]
         action_obj = action_obj.reshape(self.n_objects, -1)
         
-        if self.obj_action_type == 'all':
-            pos_ctrl, gripper_ctrl, obj_pos_ctrl, obj_rot_ctrl = action[:3], action[3], action_obj[:,0:3], action_obj[:,3:7]
-        elif self.obj_action_type == 'slide_only':
-            pos_ctrl, gripper_ctrl, obj_pos_ctrl = action[:3], action[3], action_obj[:,0:3]
-            obj_rot_ctrl = np.concatenate((np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
-        elif self.obj_action_type == 'rotation_only':
-            pos_ctrl, gripper_ctrl, obj_rot_ctrl = action[:3], action[3], action_obj[:,0:4]
-            obj_pos_ctrl = np.zeros((self.n_objects, 3))
+        pos_ctrl, gripper_ctrl = action[:3], action[3]
+        obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
+                                    np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
+        for i_action in range(len(self.obj_action_type)):
+            obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action]
 
         pos_ctrl *= 0.05  # limit maximum change in position
         rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
@@ -107,14 +98,11 @@ class FetchMultiEnv(robot_env.RobotEnv):
             gripper_ctrl = np.zeros_like(gripper_ctrl)
 
         if self.ai_object:
-            obj_pos_ctrl *= 0.05
-            obj_rot_ctrl *= 0.05
+            obj_ctrl *= 0.05
         else:
-            obj_pos_ctrl *= 0.00
-            obj_rot_ctrl *= 0.00
+            obj_ctrl *= 0.00
 
 
-        obj_ctrl = np.concatenate((obj_pos_ctrl, obj_rot_ctrl), axis=1)
         obj_ctrl = np.concatenate((obj_ctrl, np.zeros((self.sim.model.nmocap-self.n_objects-1, 7))), axis=0)
 
         action = np.concatenate([pos_ctrl, rot_ctrl, obj_ctrl.ravel(), gripper_ctrl])
@@ -167,9 +155,6 @@ class FetchMultiEnv(robot_env.RobotEnv):
         ])
         if self.observe_obj_grp:
             obs = np.concatenate([obs, np.asarray([obj_grp])])
-        else:
-            # This is just to prevent the problems in the normalization
-            obs = np.concatenate([obs, np.asarray([self.max_n_objects])])
 
         obs_all.append(obs.copy())
 
@@ -196,9 +181,6 @@ class FetchMultiEnv(robot_env.RobotEnv):
             np.zeros_like(gripper_vel)
         ])
         if self.observe_obj_grp:
-            obs = np.concatenate([obs, np.asarray([obj_grp])])
-        else:
-            # This is just to prevent the problems in the normalization
             obs = np.concatenate([obs, np.asarray([self.max_n_objects])])
 
         obs_all.append(obs.copy())

@@ -10,7 +10,7 @@ MODEL_XML_PATH = os.path.join('fetch', 'slide_multi.xml')
 
 
 class FetchSlideMultiEnv(fetch_multi_env.FetchMultiEnv, utils.EzPickle):
-    def __init__(self, reward_type='sparse', n_objects=1, obj_action_type='all', observe_obj_grp=False):
+    def __init__(self, reward_type='sparse', n_objects=1, obj_action_type=[0,1], observe_obj_grp=False):
         initial_qpos = {
             'robot0:slide0': 0.05,
             'robot0:slide1': 0.48,
