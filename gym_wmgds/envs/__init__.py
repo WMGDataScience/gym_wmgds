@@ -492,6 +492,89 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=100,
     )
 
+# Hand environments with i-object
+    register(
+        id='HandManipulateBlockRotateZMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'z'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateBlockRotateParallelMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'parallel'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateBlockRotateXYZMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateBlockFullMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    # Alias for "Full"
+    register(
+        id='HandManipulateBlockMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateEggRotateMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandEggMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateEggFullMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandEggMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    # Alias for "Full"
+    register(
+        id='HandManipulateEggMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandEggMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulatePenRotateMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulatePenFullMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    # Alias for "Full"
+    register(
+        id='HandManipulatePenMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+
+
 # Atari
 # ----------------------------------------
 
