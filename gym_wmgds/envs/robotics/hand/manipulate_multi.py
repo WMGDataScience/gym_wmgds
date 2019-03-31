@@ -3,7 +3,7 @@ import numpy as np
 
 from gym_wmgds import utils, error
 from gym_wmgds.envs.robotics import rotations, hand_multi_env
-from gym_wmgds.envs.robotics.utils import robot_get_obs
+from gym_wmgds.envs.robotics.utils import robot_get_obs, activate_weld_eqs, deactivate_weld_eqs
 
 try:
     import mujoco_py
@@ -158,6 +158,8 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
             object_initial_qpos = self.sim.data.get_joint_qpos('object:joint').copy()
             self.sim.data.set_joint_qpos('iobject:joint', object_initial_qpos)
             self.sim.data.set_joint_qpos('object:joint', iobject_initial_qpos)
+            ## Added to disable welding constrain before resetting the environment
+            #self.sim.model.eq_active[0] = 0
         self.sim.forward()
 
         if self.ai_object:
@@ -220,9 +222,14 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
         for _ in range(10):
             self._set_action(np.zeros(self.n_actions))
             try:
+                activate_weld_eqs(self.sim)
+                self.sim.step()
+                deactivate_weld_eqs(self.sim)
                 self.sim.step()
             except mujoco_py.MujocoException:
                 return False
+        ## Added to enable welding constrain after resetting the environment
+        #self.sim.model.eq_active[0] = 1
         return is_on_palm()
 
     def _sample_goal(self):

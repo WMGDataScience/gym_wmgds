@@ -94,3 +94,15 @@ def reset_mocap2body_xpos(sim):
         assert (mocap_id != -1)
         sim.data.mocap_pos[mocap_id][:] = sim.data.body_xpos[body_idx]
         sim.data.mocap_quat[mocap_id][:] = sim.data.body_xquat[body_idx]
+
+def activate_weld_eqs(sim):
+    if len(sim.model.eq_active) > 0:
+        sim.model.eq_active[1:] = 1
+    else:
+        sim.model.eq_active[0] = 1
+
+def deactivate_weld_eqs(sim):
+    if len(sim.model.eq_active) > 0:
+        sim.model.eq_active[1:] = 0
+    else:
+        sim.model.eq_active[0] = 0
