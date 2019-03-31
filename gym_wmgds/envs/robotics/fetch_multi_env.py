@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym_wmgds.envs.robotics import rotations, robot_env, utils
+from gym_wmgds.envs.robotics import rotations, robot_multi_env, utils
 import pdb
 
 
@@ -9,7 +9,7 @@ def goal_distance(goal_a, goal_b):
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
 
-class FetchMultiEnv(robot_env.RobotEnv):
+class FetchMultiEnv(robot_multi_env.RobotMultiEnv):
     """Superclass for all Fetch environments.
     """
 
