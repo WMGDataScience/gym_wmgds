@@ -54,6 +54,6 @@
     </worldbody>
 	<!-- Adding mocap for the object -->	
 	<equality>
-		<weld body1="iobject:mocap" body2="iobject" solimp="0.9 0.95 0.001" solref="0.02 1"></weld>
+		<weld body1="iobject:mocap" body2="iobject" active="false" solimp="0.9 0.95 0.001" solref="0.02 1"></weld>
 	</equality>
 </mujoco>
