@@ -218,16 +218,25 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
             is_on_palm = (cube_middle_pos[2] > 0.04)
             return is_on_palm
 
+        # First disable the weld equations for ai objects so they can place inside the env realistically 
+        if self.ai_object:
+            deactivate_weld_eqs(self.sim)
         # Run the simulation for a bunch of timesteps to let everything settle in.
         for _ in range(10):
             self._set_action(np.zeros(self.n_actions))
             try:
-                activate_weld_eqs(self.sim)
-                self.sim.step()
-                deactivate_weld_eqs(self.sim)
                 self.sim.step()
             except mujoco_py.MujocoException:
                 return False
+        # Now enable the weld equations for ai objects run the simulation for a bunch of timesteps to let everything settle in
+        if self.ai_object:
+            activate_weld_eqs(self.sim)
+            for _ in range(10):
+                self._set_action(np.zeros(self.n_actions))
+                try:
+                    self.sim.step()
+                except mujoco_py.MujocoException:
+                    return False
         ## Added to enable welding constrain after resetting the environment
         #self.sim.model.eq_active[0] = 1
         return is_on_palm()
