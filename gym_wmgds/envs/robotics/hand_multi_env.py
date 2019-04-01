@@ -5,10 +5,10 @@ import numpy as np
 import gym_wmgds
 from gym_wmgds import error, spaces
 from gym_wmgds.utils import seeding
-from gym_wmgds.envs.robotics import robot_multi_env, utils
+from gym_wmgds.envs.robotics import robot_env, utils
 
 
-class HandMultiEnv(robot_multi_env.RobotMultiEnv):
+class HandMultiEnv(robot_env.RobotEnv):
     def __init__(self, model_path, n_substeps, initial_qpos, relative_control,n_actions):
         self.relative_control = relative_control
         self.n_actions = n_actions
@@ -48,14 +48,17 @@ class HandMultiEnv(robot_multi_env.RobotMultiEnv):
         
         obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
                                     np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
-        for i_action in self.obj_action_type:
-            if i_action > 2:
-                obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.05
-            else:
-                obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.02
-
-        if not self.ai_object:
+                                    
+        if self.ai_object:
+            obj_ctrl *= 0.05
+        else:
             obj_ctrl *= 0.00
+
+        #for i_action in range(len(self.obj_action_type)):
+        #    if self.obj_action_type[i_action] > 2:
+        #        obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.05
+        #    else:
+        #        obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.05
 
         action_obj = np.concatenate([obj_ctrl.ravel()])
     
