@@ -48,17 +48,20 @@ class HandMultiEnv(robot_env.RobotEnv):
         
         obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
                                     np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
-                                    
-        if self.ai_object:
-            obj_ctrl *= 0.05
-        else:
-            obj_ctrl *= 0.00
 
         #for i_action in range(len(self.obj_action_type)):
         #    if self.obj_action_type[i_action] > 2:
         #        obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.05
         #    else:
         #        obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action] * 0.05
+
+        for i_action in range(len(self.obj_action_type)):
+            obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action]
+
+        if self.ai_object:
+            obj_ctrl *= 0.05
+        else:
+            obj_ctrl *= 0.00
 
         action_obj = np.concatenate([obj_ctrl.ravel()])
     
