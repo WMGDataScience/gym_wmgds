@@ -23,7 +23,7 @@ class RobotMultiEnv(gym_wmgds.GoalEnv):
             raise IOError('File {} does not exist'.format(fullpath))
 
         model = mujoco_py.load_model_from_path(fullpath)
-        self.sim = mujoco_py.MjSim(model, nsubsteps=n_substeps//2)
+        self.sim = mujoco_py.MjSim(model, nsubsteps=n_substeps)
         self.viewer = None
 
         self.metadata = {
@@ -58,9 +58,10 @@ class RobotMultiEnv(gym_wmgds.GoalEnv):
     def step(self, action):
         action = np.clip(action, self.action_space.low, self.action_space.high)
         self._set_action(action)
-        activate_weld_eqs(self.sim)
-        self.sim.step()
-        deactivate_weld_eqs(self.sim)
+        #if self.ai_object:
+        #    activate_weld_eqs(self.sim)
+        #    self.sim.step()
+        #    deactivate_weld_eqs(self.sim)
         self.sim.step()
         self._step_callback()
         obs = self._get_obs()
