@@ -218,9 +218,6 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
             is_on_palm = (cube_middle_pos[2] > 0.04)
             return is_on_palm
 
-        # First disable the weld equations for ai objects so they can place inside the env realistically 
-        if self.ai_object:
-            deactivate_weld_eqs(self.sim)
         # Run the simulation for a bunch of timesteps to let everything settle in.
         for _ in range(10):
             self._set_action(np.zeros(self.n_actions))
@@ -228,17 +225,6 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
                 self.sim.step()
             except mujoco_py.MujocoException:
                 return False
-        # Now enable the weld equations for ai objects run the simulation for a bunch of timesteps to let everything settle in
-        if self.ai_object:
-            activate_weld_eqs(self.sim)
-            for _ in range(10):
-                self._set_action(np.zeros(self.n_actions))
-                try:
-                    self.sim.step()
-                except mujoco_py.MujocoException:
-                    return False
-        ## Added to enable welding constrain after resetting the environment
-        #self.sim.model.eq_active[0] = 1
         return is_on_palm()
 
     def _sample_goal(self):
@@ -332,6 +318,28 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
             'achieved_goal': achieved_goal.copy(),
             'desired_goal': self.goal.ravel().copy(),
         }
+
+    def activate_ai_object_with_step(self):
+        activate_weld_eqs(self.sim)
+        for _ in range(10):
+            try:
+                self.sim.step()
+            except mujoco_py.MujocoException:
+                return False
+
+    def deactivate_ai_object_with_step(self):
+        deactivate_weld_eqs(self.sim)
+        for _ in range(10):
+            try:
+                self.sim.step()
+            except mujoco_py.MujocoException:
+                return False
+
+    def activate_ai_object(self):
+        activate_weld_eqs(self.sim)
+
+    def deactivate_ai_object(self):
+        deactivate_weld_eqs(self.sim)
 
 
 class HandBlockMultiEnv(ManipulateMultiEnv):
