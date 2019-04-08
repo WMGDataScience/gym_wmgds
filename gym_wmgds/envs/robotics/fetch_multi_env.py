@@ -1,7 +1,14 @@
 import numpy as np
 
+from gym_wmgds import error
 from gym_wmgds.envs.robotics import rotations, robot_env, utils
 import pdb
+
+try:
+    import mujoco_py
+except ImportError as e:
+    raise error.DependencyNotInstalled("{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(e))
+
 
 
 def goal_distance(goal_a, goal_b):
@@ -242,6 +249,14 @@ class FetchMultiEnv(robot_env.RobotEnv):
             self.sim.data.set_joint_qpos('object' + str(i_object) + ':joint', object_qpos)
 
         self.sim.forward()
+
+        for _ in range(10):
+            self._set_action(np.zeros(self.n_actions))
+            try:
+                self.sim.step()
+            except mujoco_py.MujocoException:
+                return False
+
         return True
 
     def _sample_goal(self):
@@ -296,5 +311,27 @@ class FetchMultiEnv(robot_env.RobotEnv):
         
         # Just to send object0 back to the floor 
         self.initial_qpos['object0:joint'] = [0.00, 0.025, 0.025, 1., 0., 0., 0.]
+
+    def activate_ai_object_with_step(self):
+        utils.activate_weld_eqs(self.sim)
+        for _ in range(10):
+            try:
+                self.sim.step()
+            except mujoco_py.MujocoException:
+                return False
+
+    def deactivate_ai_object_with_step(self):
+        utils.deactivate_weld_eqs(self.sim)
+        for _ in range(10):
+            try:
+                self.sim.step()
+            except mujoco_py.MujocoException:
+                return False
+
+    def activate_ai_object(self):
+        utils.activate_weld_eqs(self.sim)
+
+    def deactivate_ai_object(self):
+        utils.deactivate_weld_eqs(self.sim)
         
 
