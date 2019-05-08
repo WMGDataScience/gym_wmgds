@@ -221,6 +221,8 @@ class FetchMultiEnv(robot_env.RobotEnv):
 
     def _reset_sim(self):
 
+        self.deactivate_ai_object() 
+
         self.sim.set_state(self.initial_state)
 
         obj_grp = self.max_n_objects if self.ai_object else 0
@@ -256,6 +258,9 @@ class FetchMultiEnv(robot_env.RobotEnv):
                 self.sim.step()
             except mujoco_py.MujocoException:
                 return False
+
+        if self.ai_object:
+            self.activate_ai_object() 
 
         return True
 
