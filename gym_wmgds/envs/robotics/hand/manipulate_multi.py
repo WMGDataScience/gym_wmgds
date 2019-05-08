@@ -23,6 +23,7 @@ def quat_from_angle_and_axis(angle, axis):
 MANIPULATE_BLOCK_XML = os.path.join('hand', 'manipulate_block_multi.xml')
 MANIPULATE_EGG_XML = os.path.join('hand', 'manipulate_egg_multi.xml')
 MANIPULATE_PEN_XML = os.path.join('hand', 'manipulate_pen_multi.xml')
+MANIPULATE_PEN_SHIFTED_XML = os.path.join('hand', 'manipulate_pen_multi_shifted.xml')
 
 
 class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
@@ -151,6 +152,9 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
         self.sim.forward()
 
     def _reset_sim(self):
+        
+        self.deactivate_ai_object() 
+
         self.sim.set_state(self.initial_state)
         # swap object with intelligent object
         if self.ai_object:
@@ -225,6 +229,10 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
                 self.sim.step()
             except mujoco_py.MujocoException:
                 return False
+
+        if self.ai_object:
+            self.activate_ai_object() 
+
         return is_on_palm()
 
     def _sample_goal(self):
@@ -266,9 +274,9 @@ class ManipulateMultiEnv(hand_multi_env.HandMultiEnv, utils.EzPickle):
             target_quat = quat_from_angle_and_axis(angle, axis)
         elif self.target_rotation in ['ignore', 'fixed']:
             if self.ai_object:
-                target_quat = self.sim.data.get_joint_qpos('iobject:joint')
+                target_quat = self.sim.data.get_joint_qpos('iobject:joint')[3:]
             else:
-                target_quat = self.sim.data.get_joint_qpos('object:joint')
+                target_quat = self.sim.data.get_joint_qpos('object:joint')[3:]
         else:
             raise error.Error('Unknown target_rotation option "{}".'.format(self.target_rotation))
         assert target_quat is not None
@@ -370,4 +378,14 @@ class HandPenMultiEnv(ManipulateMultiEnv):
             target_position_range=np.array([(-0.04, 0.04), (-0.06, 0.02), (0.0, 0.06)]),
             randomize_initial_rotation=False, reward_type=reward_type,
             ignore_z_target_rotation=True, distance_threshold=0.05,
+            obj_action_type=obj_action_type)
+
+class HandPenMultiShiftedEnv(ManipulateMultiEnv):
+    def __init__(self, target_position='random', target_rotation='xyz', reward_type='sparse', obj_action_type=[3,4,5,6], observe_obj_grp=True):
+        super(HandPenMultiShiftedEnv, self).__init__(
+            model_path=MANIPULATE_PEN_SHIFTED_XML, target_position=target_position,
+            target_rotation=target_rotation,
+            target_position_range=np.array([(-0.04, 0.04), (-0.06, 0.02), (0.0, 0.06)]),
+            randomize_initial_rotation=False, reward_type=reward_type,
+            ignore_z_target_rotation=False, distance_threshold=0.05,
             obj_action_type=obj_action_type)
