@@ -362,6 +362,13 @@ for reward_type in ['sparse', 'dense']:
     )
 
     register(
+        id='FetchPickAndPlaceFloorMulti{}-v1'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:FetchPickAndPlaceFloorMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
+    register(
         id='FetchSlideMulti{}-v1'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:FetchSlideMultiEnv',
         kwargs=kwargs,
@@ -372,7 +379,14 @@ for reward_type in ['sparse', 'dense']:
         id='FetchStackMulti{}-v1'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
         kwargs=kwargs,
-        max_episode_steps=50,
+        max_episode_steps=100,
+    )
+
+    register(
+        id='FetchStack3Multi{}-v1'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=150,
     )
 
     # Kortex
@@ -515,6 +529,13 @@ for reward_type in ['sparse', 'dense']:
     )
 
     register(
+        id='HandManipulateBlockTranslateMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'ignore'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
         id='HandManipulateBlockFullMulti{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandBlockMultiEnv',
         kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
@@ -533,6 +554,13 @@ for reward_type in ['sparse', 'dense']:
         id='HandManipulateEggRotateMulti{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandEggMultiEnv',
         kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulateEggTranslateMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandEggMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'ignore'}, kwargs),
         max_episode_steps=100,
     )
 
@@ -558,6 +586,13 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=100,
     )
 
+    register(
+        id='HandManipulatePenRotateMultiShifted{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiShiftedEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+    
     register(
         id='HandManipulatePenFullMulti{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
