@@ -371,13 +371,13 @@ class HandEggMultiEnv(ManipulateMultiEnv):
 
 
 class HandPenMultiEnv(ManipulateMultiEnv):
-    def __init__(self, target_position='random', target_rotation='xyz', reward_type='sparse', obj_action_type=[3,4,5,6], observe_obj_grp=True):
+    def __init__(self, target_position='random', target_rotation='xyz', reward_type='sparse', obj_action_type=[3,4,5,6], observe_obj_grp=True, ignore_z_target_rotation=True):
         super(HandPenMultiEnv, self).__init__(
             model_path=MANIPULATE_PEN_XML, target_position=target_position,
             target_rotation=target_rotation,
             target_position_range=np.array([(-0.04, 0.04), (-0.06, 0.02), (0.0, 0.06)]),
             randomize_initial_rotation=False, reward_type=reward_type,
-            ignore_z_target_rotation=True, distance_threshold=0.05,
+            ignore_z_target_rotation=ignore_z_target_rotation, distance_threshold=0.05,
             obj_action_type=obj_action_type)
 
 class HandPenMultiShiftedEnv(ManipulateMultiEnv):

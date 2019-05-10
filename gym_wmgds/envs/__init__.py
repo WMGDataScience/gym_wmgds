@@ -587,6 +587,20 @@ for reward_type in ['sparse', 'dense']:
     )
 
     register(
+        id='HandManipulatePenRotateXYZMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz', 'ignore_z_target_rotation': False}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
+        id='HandManipulatePenTranslateMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'ignore'}, kwargs),
+        max_episode_steps=100,
+    )
+
+    register(
         id='HandManipulatePenRotateMultiShifted{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandPenMultiShiftedEnv',
         kwargs=_merge({'target_position': 'ignore', 'target_rotation': 'xyz'}, kwargs),
@@ -597,6 +611,13 @@ for reward_type in ['sparse', 'dense']:
         id='HandManipulatePenFullMulti{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
         kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
+        max_episode_steps=100,
+    )
+    
+    register(
+        id='HandManipulatePenFullXYZMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',
+        kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz', 'ignore_z_target_rotation': False}, kwargs),
         max_episode_steps=100,
     )
 
