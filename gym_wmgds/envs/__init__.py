@@ -375,12 +375,13 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=50,
     )   
 
-    register(
-        id='FetchStackMulti{}-v1'.format(suffix),
-        entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
-        kwargs=kwargs,
-        max_episode_steps=100,
-    )
+    for n_objects in range(2,5):
+        register(
+            id='FetchStackMulti{}{}-v1'.format(suffix,n_objects),
+            entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
+            kwargs=kwargs,
+            max_episode_steps=50*(n_objects-1),
+        )
 
     register(
         id='FetchStack3Multi{}-v1'.format(suffix),
@@ -613,7 +614,7 @@ for reward_type in ['sparse', 'dense']:
         kwargs=_merge({'target_position': 'random', 'target_rotation': 'xyz'}, kwargs),
         max_episode_steps=100,
     )
-    
+
     register(
         id='HandManipulatePenFullXYZMulti{}-v0'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:HandPenMultiEnv',

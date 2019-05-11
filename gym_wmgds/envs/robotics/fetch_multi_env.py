@@ -266,7 +266,10 @@ class FetchMultiEnv(robot_env.RobotEnv):
 
     def _sample_goal(self):
 
-        goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
+        if self.target_stacked:
+            goal = self.sim.data.get_joint_qpos('object0:joint')[:3]
+        else:
+            goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
         goal += self.target_offset
         goal[2] = self.height_offset
         if self.target_in_the_air and self.np_random.uniform() < 0.5:
