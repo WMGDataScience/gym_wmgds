@@ -94,35 +94,48 @@ class KortexMultiEnv(robot_env.RobotEnv):
 
         assert action.shape == (self.n_actions,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
-        action_obj = action[8:]
-        action_obj = action_obj.reshape(self.n_objects, -1)
+        #pdb.set_trace()
+
+        ctrlrange = self.sim.model.actuator_ctrlrange
+        actuation_range = (ctrlrange[:, 1] - ctrlrange[:, 0]) / 2.
+        #actuation_center = (ctrlrange[:, 1] + ctrlrange[:, 0]) / 2.
+        actuation_center = np.zeros_like(action[:9])
+        for i in range(self.sim.data.ctrl.shape[0]):
+            actuation_center[i] = self.sim.data.get_joint_qpos(
+                self.sim.model.actuator_names[i].replace(':A_', ':'))
         
         pos_ctrl, gripper_ctrl = action[:7], action[7]
-        obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
-                                    np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
-        for i_action in range(len(self.obj_action_type)):
-            obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action]
+        #pos_ctrl *= 0.05 
 
-        pos_ctrl *= 0.05  # limit maximum change in position
-        #rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
         gripper_ctrl = np.array([gripper_ctrl, gripper_ctrl])
         assert gripper_ctrl.shape == (2,)
         if self.block_gripper:
             gripper_ctrl = np.zeros_like(gripper_ctrl)
+
+        self.sim.data.ctrl[:7] = actuation_center[:7] + pos_ctrl * actuation_range[:7]
+        self.sim.data.ctrl[:7] = np.clip(self.sim.data.ctrl[:7], ctrlrange[:7, 0], ctrlrange[:7, 1])
+
+        self.sim.data.ctrl[7:9] = gripper_ctrl
+
+        # object actions
+        action_obj = action[8:]
+        action_obj = action_obj.reshape(self.n_objects, -1)
+        
+        obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
+                                    np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
+        for i_action in range(len(self.obj_action_type)):
+            obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action]
 
         if self.ai_object:
             obj_ctrl *= 0.05
         else:
             obj_ctrl *= 0.00
 
+        obj_ctrl = np.concatenate((obj_ctrl, np.zeros((self.sim.model.nmocap-self.n_objects, 7))), axis=0)
 
-        obj_ctrl = np.concatenate((obj_ctrl, np.zeros((self.sim.model.nmocap-self.n_objects-1, 7))), axis=0)
+        action_obj = np.concatenate([obj_ctrl.ravel()])
 
-        action = np.concatenate([pos_ctrl, obj_ctrl.ravel(), gripper_ctrl])
-
-        # Apply action to simulation.
-        utils.ctrl_set_action(self.sim, action)
-        utils.mocap_set_action(self.sim, action)
+        utils.mocap_set_action(self.sim, action_obj)
 
     def _get_obs(self):
 
@@ -308,17 +321,7 @@ class KortexMultiEnv(robot_env.RobotEnv):
 
         for name, value in initial_qpos.items():
             self.sim.data.set_joint_qpos(name, value)
-        utils.reset_mocap_welds(self.sim)
         self.sim.forward()
-
-        # Move end effector into position.
-        gripper_target = np.array([0, 0, 0. + self.gripper_extra_height]) + self.sim.data.get_site_xpos('robot0:grip')
-        # gripper_target = np.array([-0.498, 0.005, -0.431 + self.gripper_extra_height]) + self.sim.data.get_site_xpos('robot0:grip')
-        gripper_rotation = np.array([1., 0., 1., 0.])
-        #self.sim.data.set_mocap_pos('robot0:mocap', gripper_target)
-        #self.sim.data.set_mocap_quat('robot0:mocap', gripper_rotation)
-        #for _ in range(10):
-        #    self.sim.step()
 
         # Extract information for sampling goals.
         self.initial_gripper_xpos = self.sim.data.get_site_xpos('robot0:grip').copy()

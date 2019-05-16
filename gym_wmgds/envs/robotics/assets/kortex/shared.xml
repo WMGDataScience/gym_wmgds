@@ -6,6 +6,28 @@
         <material name="floor_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
         <material name="table_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.93 0.93 0.93 1"></material>
         <material name="block_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
+        <material name="block_true_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.5 0.0 1"></material>
+        <material name="block_false_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.5 1"></material>
+        <material name="block_0_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.9 0.0 1"></material>
+        <material name="block_1_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.7 0.0 1"></material>
+        <material name="block_2_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.5 0.0 1"></material>
+        <material name="block_3_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.3 0.0 1"></material>
+        <material name="block_4_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.1 0.0 1"></material>
+        <material name="block_5_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.9 1"></material>
+        <material name="block_6_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.7 1"></material>
+        <material name="block_7_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.5 1"></material>
+        <material name="block_8_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.3 1"></material>
+        <material name="block_9_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.1 1"></material>
+        <material name="puck_0_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.9 0.0 1"></material>
+        <material name="puck_1_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.7 0.0 1"></material>
+        <material name="puck_2_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.5 0.0 1"></material>
+        <material name="puck_3_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.3 0.0 1"></material>
+        <material name="puck_4_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.1 0.0 1"></material>
+        <material name="puck_5_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.9 1"></material>
+        <material name="puck_6_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.7 1"></material>
+        <material name="puck_7_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.5 1"></material>
+        <material name="puck_8_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.3 1"></material>
+        <material name="puck_9_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.0 0.0 0.1 1"></material>
         <material name="puck_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"></material>
 
         <mesh name="robot0:base_link" file="base_link.STL" />

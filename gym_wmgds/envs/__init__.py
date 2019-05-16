@@ -398,6 +398,35 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=50,
     )
 
+    register(
+        id='KortexPushMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:KortexPushMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )
+
+    register(
+        id='KortexPickAndPlaceMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:KortexPickAndPlaceMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )  
+
+    # Universal
+    register(
+        id='UniversalPushMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:UniversalPushMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )
+
+    register(
+        id='UniversalPickAndPlaceMulti{}-v0'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:UniversalPickAndPlaceMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )  
+
     # Hand
     register(
         id='HandReach{}-v0'.format(suffix),

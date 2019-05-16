@@ -30,3 +30,11 @@ from gym_wmgds.envs.robotics.hand.manipulate_touch_sensors import HandPenTouchSe
 
 from gym_wmgds.envs.robotics.kortex_env import KortexEnv
 from gym_wmgds.envs.robotics.kortex.reach import KortexReachEnv
+
+from gym_wmgds.envs.robotics.kortex_multi_env import KortexMultiEnv
+from gym_wmgds.envs.robotics.kortex.push_multi import KortexPushMultiEnv
+#from gym_wmgds.envs.robotics.kortex.pick_and_place_multi import KortexPickAndPlaceMultiEnv
+
+from gym_wmgds.envs.robotics.universal_multi_env import UniversalMultiEnv
+from gym_wmgds.envs.robotics.universal.push_multi import UniversalPushMultiEnv
+#from gym_wmgds.envs.robotics.kortex.pick_and_place_multi import KortexPickAndPlaceMultiEnv
