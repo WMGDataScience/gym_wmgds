@@ -23,7 +23,8 @@ class FetchMultiEnv(robot_env.RobotEnv):
     def __init__(
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         target_in_the_air, target_stacked, target_offset, obj_range, target_range,
-        distance_threshold, initial_qpos, reward_type, n_objects, obj_action_type, observe_obj_grp
+        distance_threshold, initial_qpos, reward_type, n_objects, obj_action_type, observe_obj_grp, 
+        change_stack_order=False
     ):
         """Initializes a new Fetch environment.
 
@@ -44,6 +45,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         self.block_gripper = block_gripper
         self.target_in_the_air = target_in_the_air
         self.target_stacked = target_stacked
+        self.change_stack_order = change_stack_order
         self.target_offset = target_offset
         self.obj_range = obj_range
         self.target_range = target_range
@@ -59,6 +61,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         self.n_actions = n_objects * len(obj_action_type) + 4
 
         self.initial_qpos = initial_qpos
+        self.stack_prob = 0.5
 
         super(FetchMultiEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=self.n_actions,
@@ -267,8 +270,13 @@ class FetchMultiEnv(robot_env.RobotEnv):
     def _sample_goal(self):
 
         if self.target_stacked:
-            goal = self.sim.data.get_joint_qpos('object0:joint')[:3]
+            if self.change_stack_order:
+                object_order = np.random.permutation(self.n_objects)
+            else:
+                object_order = np.arange(self.n_objects)
+            goal = self.sim.data.get_joint_qpos('object' + str(object_order[0]) + ':joint')[:3]
         else:
+            object_order = np.arange(self.n_objects)
             goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
         goal += self.target_offset
         goal[2] = self.height_offset
@@ -276,11 +284,21 @@ class FetchMultiEnv(robot_env.RobotEnv):
             goal[2] += self.np_random.uniform(0, 0.45)
 
         goal_all = []
-        goal_all.append(goal.copy())
+        first_goal = goal.copy()
 
-        for  i_object in range(1, self.n_objects):
+        coin_toss = self.np_random.uniform() < self.stack_prob
+        for  i_object in np.argsort(object_order):
             if self.target_stacked:
-                goal_all.append(goal.copy() + [0., 0., 0.05*i_object])
+                if coin_toss:
+                    goal_all.append(goal.copy() + [0., 0., 0.05*i_object])
+                else:
+                    if i_object == 0:
+                        goal_all.append(first_goal.copy())
+                    else:
+                        goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                        goal += self.target_offset
+                        goal[2] = self.height_offset 
+                        goal_all.append(goal.copy())
             else:
                 goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
                 goal += self.target_offset
