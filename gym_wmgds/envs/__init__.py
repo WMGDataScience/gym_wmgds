@@ -383,12 +383,13 @@ for reward_type in ['sparse', 'dense']:
             max_episode_steps=50*(n_objects-1),
         )
 
-    register(
-        id='FetchStack3Multi{}-v1'.format(suffix),
-        entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
-        kwargs=kwargs,
-        max_episode_steps=150,
-    )
+    for n_objects in range(2,5):
+        register(
+            id='FetchStackBordersMulti{}{}-v1'.format(suffix,n_objects),
+            entry_point='gym_wmgds.envs.robotics:FetchStackBordersMultiEnv',
+            kwargs=kwargs,
+            max_episode_steps=50*(n_objects-1),
+        )
 
     # Kortex
     register(
