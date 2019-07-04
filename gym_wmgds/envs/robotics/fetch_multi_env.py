@@ -24,7 +24,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         self, model_path, n_substeps, gripper_extra_height, block_gripper,
         target_in_the_air, target_stacked, target_offset, obj_range, target_range,
         distance_threshold, initial_qpos, reward_type, n_objects, obj_action_type, observe_obj_grp, 
-        change_stack_order=False
+        change_stack_order=False, gripped_object=False
     ):
         """Initializes a new Fetch environment.
 
@@ -43,6 +43,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         """
         self.gripper_extra_height = gripper_extra_height
         self.block_gripper = block_gripper
+        self.gripped_object = gripped_object
         self.target_in_the_air = target_in_the_air
         self.target_stacked = target_stacked
         self.change_stack_order = change_stack_order
@@ -106,6 +107,8 @@ class FetchMultiEnv(robot_env.RobotEnv):
         assert gripper_ctrl.shape == (2,)
         if self.block_gripper:
             gripper_ctrl = np.zeros_like(gripper_ctrl)
+        if self.gripped_object:
+            gripper_ctrl = np.ones_like(gripper_ctrl)*-1
 
         if self.ai_object:
             obj_ctrl *= 0.05
@@ -250,7 +253,22 @@ class FetchMultiEnv(robot_env.RobotEnv):
             object_qpos = self.sim.data.get_joint_qpos('object' + str(i_object) + ':joint')
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
-            object_qpos[2] = self.height_offset 
+            object_qpos[2] = self.height_offset
+
+            #<--this part is for fixing the object to the gripper before starting the trajectory
+            if self.gripped_object:
+                gripper_target = object_qpos[0:3]
+                gripper_rotation = np.array([1., 0., 1., 0.])
+                self.sim.data.set_mocap_pos('robot0:mocap', gripper_target)
+                self.sim.data.set_mocap_quat('robot0:mocap', gripper_rotation)
+                for _ in range(10):
+                    self.sim.step()
+
+                initial_gripper_xpos = self.sim.data.get_site_xpos('robot0:grip').copy()
+                object_xpos = initial_gripper_xpos[:2]
+                object_qpos[:2] = object_xpos
+            #<--this part is for fixing the object to the gripper before starting the trajectory
+
             self.sim.data.set_joint_qpos('object' + str(i_object) + ':joint', object_qpos)
 
         self.sim.forward()
@@ -286,6 +304,17 @@ class FetchMultiEnv(robot_env.RobotEnv):
         goal_all = []
         first_goal = goal.copy()
 
+        #<--this part is for creating different stacking objectives
+        other_goals = []
+        for i_object in np.argsort(object_order[1:]):
+            other_goal = self.sim.data.get_joint_qpos('object' + str(object_order[i_object]) + ':joint')[:3]
+            other_goal += self.target_offset
+            other_goal[2] = self.height_offset
+            if self.target_in_the_air and self.np_random.uniform() < 0.5:
+                other_goal[2] += self.np_random.uniform(0, 0.45)
+            other_goals.append(other_goal)
+        #<--this part is for creating different stacking objectives
+
         coin_toss = self.np_random.uniform() < self.stack_prob
         for  i_object in np.argsort(object_order):
             if self.target_stacked:
@@ -295,10 +324,16 @@ class FetchMultiEnv(robot_env.RobotEnv):
                     if i_object == 0:
                         goal_all.append(first_goal.copy())
                     else:
-                        goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
-                        goal += self.target_offset
-                        goal[2] = self.height_offset 
-                        goal_all.append(goal.copy())
+                        #<--this part is for creating different stacking objectives
+                        #if self.np_random.uniform() < 0.25:
+                        if self.np_random.uniform() < 0.0:
+                            goal_all.append(other_goals[i_object-1].copy())
+                        #<--this part is for creating different stacking objectives
+                        else:
+                            goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                            goal += self.target_offset
+                            goal[2] = self.height_offset 
+                            goal_all.append(goal.copy())
             else:
                 goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
                 goal += self.target_offset
