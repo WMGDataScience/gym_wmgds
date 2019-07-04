@@ -1,4 +1,5 @@
 from gym_wmgds.envs.registration import registry, register, make, spec
+import numpy as np
 
 # Algorithmic
 # ----------------------------------------
@@ -369,6 +370,20 @@ for reward_type in ['sparse', 'dense']:
     )
 
     register(
+        id='FetchPickAndPlaceGrippedMultiEnv{}-v1'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:FetchPickAndPlaceGrippedMultiEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )
+
+    register(
+        id='FetchPickAndPlaceFlexMulti{}-v1'.format(suffix),
+        entry_point='gym_wmgds.envs.robotics:FetchPickAndPlaceFlexEnv',
+        kwargs=kwargs,
+        max_episode_steps=50,
+    )
+
+    register(
         id='FetchSlideMulti{}-v1'.format(suffix),
         entry_point='gym_wmgds.envs.robotics:FetchSlideMultiEnv',
         kwargs=kwargs,
@@ -380,7 +395,9 @@ for reward_type in ['sparse', 'dense']:
             id='FetchStackMulti{}{}-v1'.format(suffix,n_objects),
             entry_point='gym_wmgds.envs.robotics:FetchStackMultiEnv',
             kwargs=kwargs,
-            max_episode_steps=50*(n_objects-1),
+            #max_episode_steps=50*(n_objects-1),
+            max_episode_steps=50*(np.minimum(n_objects,3)-1),
+            
         )
 
     for n_objects in range(2,5):
@@ -388,7 +405,8 @@ for reward_type in ['sparse', 'dense']:
             id='FetchStackBordersMulti{}{}-v1'.format(suffix,n_objects),
             entry_point='gym_wmgds.envs.robotics:FetchStackBordersMultiEnv',
             kwargs=kwargs,
-            max_episode_steps=50*(n_objects-1),
+            #max_episode_steps=50*(n_objects-1),
+            max_episode_steps=50*(np.minimum(n_objects,3)-1),
         )
 
     # Kortex
