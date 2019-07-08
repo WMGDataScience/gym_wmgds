@@ -55,7 +55,7 @@ class FetchFlexEnv(robot_env.RobotEnv):
         self.n_objects = n_objects
         self.ai_object = False
         self.obj_action_type = obj_action_type
-        self.max_n_objects = 5
+        self.max_n_objects = n_objects
         self.observe_obj_grp = observe_obj_grp
 
         self.n_actions = n_objects * len(obj_action_type) + 4
@@ -175,6 +175,20 @@ class FetchFlexEnv(robot_env.RobotEnv):
             # object state wrt target
             target_rel_pos.append(target_pos[i_object%self.max_n_objects] - self.sim.data.get_site_xpos('object' + str(i_object)))
             target_velp.append(0 - self.sim.data.get_site_xvelp('object' + str(i_object)) * dt)
+            #obj_ab = []
+            #obj_a = self.sim.data.get_site_xpos('object' + str(i_object))
+            #obj_b = self.sim.data.get_site_xpos('object' + str(i_object) + '1')
+            #obj_ab.append(obj_a)
+            #obj_ab.append(obj_b)
+            #obj_ab = np.asarray(obj_ab)
+            #target_rel_pos.append(target_pos[i_object%self.max_n_objects] - obj_ab.copy().ravel())
+            #obj_ab = []  
+            #obj_a = self.sim.data.get_site_xvelp('object' + str(i_object))
+            #obj_b = self.sim.data.get_site_xvelp('object' + str(i_object) + '1')
+            #obj_ab.append(obj_a)
+            #obj_ab.append(obj_b)
+            #obj_ab = np.asarray(obj_ab)
+            #target_velp.append(0 - obj_ab.copy().ravel() * dt)
 
         target_rel_pos = np.asarray(target_rel_pos)
         target_velp = np.asarray(target_velp)    
@@ -220,6 +234,9 @@ class FetchFlexEnv(robot_env.RobotEnv):
         for i_target in range(0, self.n_objects):
             site_id = self.sim.model.site_name2id('target' + str(i_target))
             self.sim.model.site_pos[site_id] = target_pos[i_target] - sites_offset[0]
+            #self.sim.model.site_pos[site_id] = target_pos[i_target][0:3] - sites_offset[0]
+            #site_id = self.sim.model.site_name2id('target' + str(i_target) + '1')
+            #self.sim.model.site_pos[site_id] = target_pos[i_target][3:] - sites_offset[0]
         self.sim.forward()
 
     def _reset_sim(self):
@@ -231,11 +248,11 @@ class FetchFlexEnv(robot_env.RobotEnv):
         obj_grp = self.max_n_objects if self.ai_object else 0
 
         # First put all objects beside the table
-        for i_object in range(0, self.max_n_objects*2):
+        for i_object in range(0, self.max_n_objects*2, self.max_n_objects):
             self.sim.data.set_joint_qpos('object' + str(i_object) + ':joint', self.initial_qpos['object' + str(i_object) + ':joint'])
         # Randomize start position of object.
         placement_count = 0
-        for i_object in range(obj_grp, obj_grp + self.n_objects):
+        for i_object in range(obj_grp, obj_grp + self.n_objects, self.n_objects):
             object_xpos = self.initial_gripper_xpos[:2]
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
@@ -269,56 +286,53 @@ class FetchFlexEnv(robot_env.RobotEnv):
 
     def _sample_goal(self):
 
-        if self.target_stacked:
-            if self.change_stack_order:
-                object_order = np.random.permutation(self.n_objects)
-            else:
-                object_order = np.arange(self.n_objects)
-            goal = self.sim.data.get_joint_qpos('object' + str(object_order[0]) + ':joint')[:3]
-        else:
-            object_order = np.arange(self.n_objects)
-            goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
+        goal_all = []
+        goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
         goal += self.target_offset
         goal[2] = self.height_offset
-        if self.target_in_the_air and self.np_random.uniform() < 0.5:
-            goal[2] += self.np_random.uniform(0, 0.45)
+        
+        #comb = self.np_random.randomint(9)
+        comb = self.np_random.uniform(4,9) // 1
+        if comb == 0:       #horizontal ABC
+            goal_a = goal.copy() + [-0.05, +0.00, +0.00]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_c = goal.copy() + [+0.05, +0.00, +0.00]
+        elif comb == 1:     #horizontal CBA
+            goal_a = goal.copy() + [+0.05, +0.00, +0.00]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_c = goal.copy() + [-0.05, +0.00, +0.00]
+        elif comb == 2:     #vertical ABC
+            goal_a = goal.copy() + [+0.00, +0.00, +0.10]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+            goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+        elif comb == 3:     #vertical CBA
+            goal_a = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+            goal_c = goal.copy() + [+0.00, +0.00, +0.10]
+        elif comb == 4:        
+            goal_a = goal.copy() + [+0.00, +0.00, +0.05]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_c = goal.copy() + [+0.05, +0.00, +0.00]
+        elif comb == 5:        
+            goal_a = goal.copy() + [-0.05, +0.00, +0.00]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_c = goal.copy() + [+0.00, +0.00, +0.05]
+        elif comb == 6:        
+            goal_a = goal.copy() + [+0.00, +0.00, +0.00]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+            goal_c = goal.copy() + [+0.05, +0.00, +0.05]
+        elif comb == 7:        
+            goal_a = goal.copy() + [+0.05, +0.00, +0.05]
+            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+            goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+        elif comb == 8:        
+            goal_a = goal.copy() + [-0.035, +0.00, +0.01]
+            goal_b = goal.copy() + [+0.000, +0.00, +0.045]
+            goal_c = goal.copy() + [+0.035, +0.00, +0.01]
 
-        goal_all = []
-        first_goal = goal.copy()
-
-        # other_goals = []
-        # for i_object in np.argsort(object_order[1:]):
-        #     other_goal = self.sim.data.get_joint_qpos('object' + str(object_order[i_object]) + ':joint')[:3]
-        #     other_goal += self.target_offset
-        #     other_goal[2] = self.height_offset
-        #     if self.target_in_the_air and self.np_random.uniform() < 0.5:
-        #         other_goal[2] += self.np_random.uniform(0, 0.45)
-        #     other_goals.append(other_goal)
-
-        coin_toss = self.np_random.uniform() < self.stack_prob
-        for  i_object in np.argsort(object_order):
-            if self.target_stacked:
-                if coin_toss:
-                    goal_all.append(goal.copy() + [0., 0., 0.05*i_object])
-                else:
-                    if i_object == 0:
-                        goal_all.append(first_goal.copy())
-                    else:
-                        #if self.np_random.uniform() < 0.25:
-                        # if self.np_random.uniform() < 0.0:
-                        #     goal_all.append(other_goals[i_object-1].copy())
-                        # else:
-                        goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
-                        goal += self.target_offset
-                        goal[2] = self.height_offset 
-                        goal_all.append(goal.copy())
-        else:
-                goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
-                goal += self.target_offset
-                goal[2] = self.height_offset
-                if self.target_in_the_air and self.np_random.uniform() < 0.5:
-                    goal[2] += self.np_random.uniform(0, 0.45)
-                goal_all.append(goal.copy())
+        goal_all.append(goal_a.copy())
+        goal_all.append(goal_b.copy())
+        goal_all.append(goal_c.copy())
 
         goal_all = np.asarray(goal_all)
 
