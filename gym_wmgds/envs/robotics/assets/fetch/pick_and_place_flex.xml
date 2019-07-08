@@ -37,33 +37,6 @@
 			</body>
 		</body>
 
-		<!--body name="object0" pos="-0.100 0.025 0.025">
-			<joint name="object0:joint" type="free" damping="0.01"></joint>
-			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="block_0_mat" mass="2"></geom>
-			<site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
-			<body name="object0:link0" pos="0 0 0.025">
-				<geom fromto="0 0 0 0 0 0.15" name="object0:link0" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-				<joint axis="1 0 0" limited="true" name="object0:link0:joint0" pos="0. 0. 0." range="0 3.14159" type="hinge"/>
-				<joint axis="0 0 1" limited="true" name="object0:link0:joint1" pos="0. 0. 0." range="-1.570795 1.570795" type="hinge"/>
-				<body name="object0:link1" pos="0 0 0.15">
-					<geom fromto="0 0 0 0 0.15 0" name="object0:link1" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-					<joint axis="1 0 0" limited="true" name="object0:link1:joint0" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-					<joint axis="0 0 1" limited="true" name="object0:link1:joint1" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-					<body name="link2" pos="0 0.15 0.0">
-						<geom fromto="0 0 0 0 0 -0.15" name="object0:link2" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-						<joint axis="1 0 0" limited="true" name="object0:link2:joint0" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-						<joint axis="0 0 1" limited="true" name="object0:link2:joint1" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-						<body name="object1" pos="0 0 -0.175">
-							<joint axis="1 0 0" limited="true" name="object1:joint0" pos="0. 0. 0.025" range="0 3.14159" type="hinge"/>
-							<joint axis="0 0 1" limited="true" name="object1:joint1" pos="0. 0. 0.025" range="-1.570795 1.570795" type="hinge"/>
-							<geom size="0.025 0.025 0.025" type="box" condim="3" name="object1" material="block_1_mat" mass="2"></geom>
-							<site name="object1" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
-						</body>	
-					</body>					
-				</body>
-			</body>
-		</body-->
-
 		<body name="object3" pos="-0.350 0.025 0.025">
 			<joint name="object3:joint" type="free" damping="0.01"></joint>
 			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object3" material="block_0_mat" mass="2"></geom>
@@ -79,33 +52,6 @@
 				</body>
 			</body>
 		</body>
-
-		<!--body name="object2" pos="-0.175 0.025 0.025">
-			<joint name="object2:joint" type="free" damping="0.01"></joint>
-			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object2" material="block_5_mat" mass="2"></geom>
-			<site name="object2" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
-			<body name="object2:link0" pos="0 0 0.025">
-				<geom fromto="0 0 0 0 0 0.15" name="object2:link0" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-				<joint axis="1 0 0" limited="true" name="object2:link0:joint0" pos="0. 0. 0." range="0 3.14159" type="hinge"/>
-				<joint axis="0 0 1" limited="true" name="object2:link0:joint1" pos="0. 0. 0." range="-1.570795 1.570795" type="hinge"/>
-				<body name="object2:link1" pos="0 0 0.15">
-					<geom fromto="0 0 0 0 0.15 0" name="object2:link1" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-					<joint axis="1 0 0" limited="true" name="object2:link1:joint0" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-					<joint axis="0 0 1" limited="true" name="object2:link1:joint1" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-					<body name="object2:link2" pos="0 0.15 0.0">
-						<geom fromto="0 0 0 0 0 -0.15" name="object2:link2" rgba="0.0 0.4 0.6 1" size=".005" type="capsule"/>
-						<joint axis="1 0 0" limited="true" name="object2:link2:joint0" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-						<joint axis="0 0 1" limited="true" name="object2:link2:joint1" pos="0. 0. 0."  range="-3.14159 3.14159" type="hinge"/>
-						<body name="object3" pos="0 0 -0.175">
-							<joint axis="1 0 0" limited="true" name="object3:joint0" pos="0. 0. 0.025" range="0 3.14159" type="hinge"/>
-							<joint axis="0 0 1" limited="true" name="object3:joint1" pos="0. 0. 0.025" range="-1.570795 1.570795" type="hinge"/>
-							<geom size="0.025 0.025 0.025" type="box" condim="3" name="object3" material="block_6_mat" mass="2"></geom>
-							<site name="object3" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
-						</body>	
-					</body>					
-				</body>
-			</body>
-		</body-->
 
 		<!-- Adding mocap for the ai objects -->
 
