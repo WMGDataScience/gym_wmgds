@@ -175,20 +175,6 @@ class FetchFlexEnv(robot_env.RobotEnv):
             # object state wrt target
             target_rel_pos.append(target_pos[i_object%self.max_n_objects] - self.sim.data.get_site_xpos('object' + str(i_object)))
             target_velp.append(0 - self.sim.data.get_site_xvelp('object' + str(i_object)) * dt)
-            #obj_ab = []
-            #obj_a = self.sim.data.get_site_xpos('object' + str(i_object))
-            #obj_b = self.sim.data.get_site_xpos('object' + str(i_object) + '1')
-            #obj_ab.append(obj_a)
-            #obj_ab.append(obj_b)
-            #obj_ab = np.asarray(obj_ab)
-            #target_rel_pos.append(target_pos[i_object%self.max_n_objects] - obj_ab.copy().ravel())
-            #obj_ab = []  
-            #obj_a = self.sim.data.get_site_xvelp('object' + str(i_object))
-            #obj_b = self.sim.data.get_site_xvelp('object' + str(i_object) + '1')
-            #obj_ab.append(obj_a)
-            #obj_ab.append(obj_b)
-            #obj_ab = np.asarray(obj_ab)
-            #target_velp.append(0 - obj_ab.copy().ravel() * dt)
 
         target_rel_pos = np.asarray(target_rel_pos)
         target_velp = np.asarray(target_velp)    
@@ -234,9 +220,6 @@ class FetchFlexEnv(robot_env.RobotEnv):
         for i_target in range(0, self.n_objects):
             site_id = self.sim.model.site_name2id('target' + str(i_target))
             self.sim.model.site_pos[site_id] = target_pos[i_target] - sites_offset[0]
-            #self.sim.model.site_pos[site_id] = target_pos[i_target][0:3] - sites_offset[0]
-            #site_id = self.sim.model.site_name2id('target' + str(i_target) + '1')
-            #self.sim.model.site_pos[site_id] = target_pos[i_target][3:] - sites_offset[0]
         self.sim.forward()
 
     def _reset_sim(self):
@@ -290,49 +273,62 @@ class FetchFlexEnv(robot_env.RobotEnv):
         goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
         goal += self.target_offset
         goal[2] = self.height_offset
-        
-        #comb = self.np_random.randomint(9)
-        comb = self.np_random.uniform(4,9) // 1
-        if comb == 0:       #horizontal ABC
-            goal_a = goal.copy() + [-0.05, +0.00, +0.00]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_c = goal.copy() + [+0.05, +0.00, +0.00]
-        elif comb == 1:     #horizontal CBA
-            goal_a = goal.copy() + [+0.05, +0.00, +0.00]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_c = goal.copy() + [-0.05, +0.00, +0.00]
-        elif comb == 2:     #vertical ABC
-            goal_a = goal.copy() + [+0.00, +0.00, +0.10]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
-            goal_c = goal.copy() + [+0.00, +0.00, +0.00]
-        elif comb == 3:     #vertical CBA
-            goal_a = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
-            goal_c = goal.copy() + [+0.00, +0.00, +0.10]
-        elif comb == 4:        
-            goal_a = goal.copy() + [+0.00, +0.00, +0.05]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_c = goal.copy() + [+0.05, +0.00, +0.00]
-        elif comb == 5:        
-            goal_a = goal.copy() + [-0.05, +0.00, +0.00]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_c = goal.copy() + [+0.00, +0.00, +0.05]
-        elif comb == 6:        
-            goal_a = goal.copy() + [+0.00, +0.00, +0.00]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
-            goal_c = goal.copy() + [+0.05, +0.00, +0.05]
-        elif comb == 7:        
-            goal_a = goal.copy() + [+0.05, +0.00, +0.05]
-            goal_b = goal.copy() + [+0.00, +0.00, +0.05]
-            goal_c = goal.copy() + [+0.00, +0.00, +0.00]
-        elif comb == 8:        
-            goal_a = goal.copy() + [-0.035, +0.00, +0.01]
-            goal_b = goal.copy() + [+0.000, +0.00, +0.045]
-            goal_c = goal.copy() + [+0.035, +0.00, +0.01]
+
+        if self.n_objects == 3:
+            #comb = self.np_random.randomint(9)
+            comb = self.np_random.uniform(4,9) // 1
+            if comb == 0:       #horizontal ABC
+                goal_a = goal.copy() + [-0.05, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_c = goal.copy() + [+0.05, +0.00, +0.00]
+            elif comb == 1:     #horizontal CBA
+                goal_a = goal.copy() + [+0.05, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_c = goal.copy() + [-0.05, +0.00, +0.00]
+            elif comb == 2:     #vertical ABC
+                goal_a = goal.copy() + [+0.00, +0.00, +0.10]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+            elif comb == 3:     #vertical CBA
+                goal_a = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.10]
+            elif comb == 4:        
+                goal_a = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_c = goal.copy() + [+0.05, +0.00, +0.00]
+            elif comb == 5:        
+                goal_a = goal.copy() + [-0.05, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.05]
+            elif comb == 6:        
+                goal_a = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_c = goal.copy() + [+0.05, +0.00, +0.05]
+            elif comb == 7:        
+                goal_a = goal.copy() + [+0.05, +0.00, +0.05]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+            elif comb == 8:        
+                goal_a = goal.copy() + [-0.035, +0.00, +0.01]
+                goal_b = goal.copy() + [+0.000, +0.00, +0.045]
+                goal_c = goal.copy() + [+0.035, +0.00, +0.01]
+        elif self.n_objects == 5:
+            goal_a = goal.copy() + [+0.035, +0.00, +0.045]
+            goal_b = goal.copy() + [-0.035, +0.00, +0.045]
+            goal_c = goal.copy() + [-0.070, +0.00, +0.010]
+            goal_d = goal.copy() + [+0.000, +0.00, +0.010]
+            goal_e = goal.copy() + [+0.070, +0.00, +0.010]
+
+
 
         goal_all.append(goal_a.copy())
         goal_all.append(goal_b.copy())
         goal_all.append(goal_c.copy())
+        if self.n_objects == 5:
+            goal_all.append(goal_d.copy())
+            goal_all.append(goal_e.copy())
+
 
         goal_all = np.asarray(goal_all)
 
