@@ -24,6 +24,7 @@ class FetchPickAndPlaceMultiEnv(fetch_multi_env.FetchMultiEnv, utils.EzPickle):
             'object8:joint': [0.80, 0.025, 0.025, 1., 0., 0., 0.],
             'object9:joint': [0.90, 0.025, 0.025, 1., 0., 0., 0.]
         }
+        global MODEL_XML_PATH
         if hide_extra_objs:
             MODEL_XML_PATH = os.path.join('fetch', 'pick_and_place_multi_hidden.xml')
         fetch_multi_env.FetchMultiEnv.__init__(
@@ -76,6 +77,7 @@ class FetchPickAndPlaceGrippedMultiEnv(fetch_multi_env.FetchMultiEnv, utils.EzPi
             'object8:joint': [0.80, 0.025, 0.025, 1., 0., 0., 0.],
             'object9:joint': [0.90, 0.025, 0.025, 1., 0., 0., 0.]
         }
+        global MODEL_XML_PATH
         if hide_extra_objs:
             MODEL_XML_PATH = os.path.join('fetch', 'pick_and_place_multi_hidden.xml')
         fetch_multi_env.FetchMultiEnv.__init__(
