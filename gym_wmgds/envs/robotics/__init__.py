@@ -13,6 +13,7 @@ from gym_wmgds.envs.robotics.fetch.pick_and_place_multi import FetchPickAndPlace
 from gym_wmgds.envs.robotics.fetch.pick_and_place_multi import FetchPickAndPlaceFloorMultiEnv
 from gym_wmgds.envs.robotics.fetch.pick_and_place_multi import FetchPickAndPlaceGrippedMultiEnv
 from gym_wmgds.envs.robotics.fetch.pick_and_place_flex import FetchPickAndPlaceFlexEnv
+from gym_wmgds.envs.robotics.fetch.pick_and_place_flex import FetchPickAndPlaceFlexHingedEnv
 from gym_wmgds.envs.robotics.fetch.stack_multi import FetchStackMultiEnv
 from gym_wmgds.envs.robotics.fetch.stack_multi import FetchStackBordersMultiEnv
 from gym_wmgds.envs.robotics.fetch.slide_multi import FetchSlideMultiEnv
