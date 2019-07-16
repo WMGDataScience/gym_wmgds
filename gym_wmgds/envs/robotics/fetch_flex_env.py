@@ -15,6 +15,15 @@ def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
+def get_total_penetration(contacts, threshold=-1e-4):
+    total_penetration = 0
+
+    for contact in contacts:
+        if contact.dist < threshold:
+            total_penetration += contact.dist
+    
+    return total_penetration
+
 
 class FetchFlexEnv(robot_env.RobotEnv):
     """Superclass for all Fetch environments.
@@ -57,8 +66,9 @@ class FetchFlexEnv(robot_env.RobotEnv):
         self.obj_action_type = obj_action_type
         self.max_n_objects = n_objects
         self.observe_obj_grp = observe_obj_grp
+        self.n_obj_mocaps = 2
 
-        self.n_actions = n_objects * len(obj_action_type) + 4
+        self.n_actions = self.n_obj_mocaps * len(obj_action_type) + 4
 
         self.initial_qpos = initial_qpos
         self.stack_prob = 0.5
@@ -71,6 +81,8 @@ class FetchFlexEnv(robot_env.RobotEnv):
     # ----------------------------
 
     def compute_reward(self, achieved_goal, goal, info):
+        # Compute penetration
+        #p = get_total_penetration(self.sim.data.contact, threshold=0.)
         # Compute distance between goal and the achieved goal.
         d = goal_distance(achieved_goal, goal)
         if self.reward_type == 'sparse':
@@ -92,11 +104,11 @@ class FetchFlexEnv(robot_env.RobotEnv):
         assert action.shape == (self.n_actions,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         action_obj = action[4:]
-        action_obj = action_obj.reshape(self.n_objects, -1)
+        action_obj = action_obj.reshape(self.n_obj_mocaps, -1)
         
         pos_ctrl, gripper_ctrl = action[:3], action[3]
-        obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
-                                    np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
+        obj_ctrl = np.concatenate((np.zeros((self.n_obj_mocaps, 3)), 
+                                    np.ones((self.n_obj_mocaps, 1)), np.zeros((self.n_obj_mocaps, 3))), axis=1)
         for i_action in range(len(self.obj_action_type)):
             obj_ctrl[:,self.obj_action_type[i_action]] = action_obj[:,i_action]
 
@@ -112,8 +124,7 @@ class FetchFlexEnv(robot_env.RobotEnv):
         else:
             obj_ctrl *= 0.00
 
-
-        obj_ctrl = np.concatenate((obj_ctrl, np.zeros((self.sim.model.nmocap-self.n_objects-1, 7))), axis=0)
+        obj_ctrl = np.concatenate((obj_ctrl, np.zeros((self.sim.model.nmocap-self.n_obj_mocaps-1, 7))), axis=0)
 
         action = np.concatenate([pos_ctrl, rot_ctrl, obj_ctrl.ravel(), gripper_ctrl])
 
@@ -234,19 +245,11 @@ class FetchFlexEnv(robot_env.RobotEnv):
         for i_object in range(0, self.max_n_objects*2, self.max_n_objects):
             self.sim.data.set_joint_qpos('object' + str(i_object) + ':joint', self.initial_qpos['object' + str(i_object) + ':joint'])
         # Randomize start position of object.
-        placement_count = 0
         for i_object in range(obj_grp, obj_grp + self.n_objects, self.n_objects):
             object_xpos = self.initial_gripper_xpos[:2]
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
-                placement_count += 1
-                for j_object in range(obj_grp, i_object):
-                    if np.linalg.norm(object_xpos - self.sim.data.get_joint_qpos('object' + str(j_object) + ':joint')[:2]) < 0.070:
-                        object_xpos = self.initial_gripper_xpos[:2]
-                        break
-                if placement_count >= 1000:
-                    print('object placement is ended as maximum number of trials has been reached')
-                    break
+                object_xpos -= np.asarray([0.1,0]) #shifting object start position
             object_qpos = self.sim.data.get_joint_qpos('object' + str(i_object) + ':joint')
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
@@ -275,8 +278,7 @@ class FetchFlexEnv(robot_env.RobotEnv):
         goal[2] = self.height_offset
 
         if self.n_objects == 3:
-            #comb = self.np_random.randomint(9)
-            comb = self.np_random.uniform(4,9) // 1
+            comb = self.np_random.uniform(4,6) // 1
             if comb == 0:       #horizontal ABC
                 goal_a = goal.copy() + [-0.05, +0.00, +0.00]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.00]
@@ -293,34 +295,94 @@ class FetchFlexEnv(robot_env.RobotEnv):
                 goal_a = goal.copy() + [+0.00, +0.00, +0.00]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.05]
                 goal_c = goal.copy() + [+0.00, +0.00, +0.10]
-            elif comb == 4:        
+            elif comb == 4:     #L
                 goal_a = goal.copy() + [+0.00, +0.00, +0.05]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.00]
                 goal_c = goal.copy() + [+0.05, +0.00, +0.00]
-            elif comb == 5:        
+            elif comb == 5:     #L 90 ccw
                 goal_a = goal.copy() + [-0.05, +0.00, +0.00]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.00]
                 goal_c = goal.copy() + [+0.00, +0.00, +0.05]
-            elif comb == 6:        
+            elif comb == 6:     #L 180
                 goal_a = goal.copy() + [+0.00, +0.00, +0.00]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.05]
-                goal_c = goal.copy() + [+0.05, +0.00, +0.05]
-            elif comb == 7:        
+                goal_c = goal.copy() + [-0.05, +0.00, +0.05]
+            elif comb == 7:     #L 90 cw   
                 goal_a = goal.copy() + [+0.05, +0.00, +0.05]
                 goal_b = goal.copy() + [+0.00, +0.00, +0.05]
                 goal_c = goal.copy() + [+0.00, +0.00, +0.00]
-            elif comb == 8:        
+            elif comb == 8:    #/\
                 goal_a = goal.copy() + [-0.035, +0.00, +0.01]
                 goal_b = goal.copy() + [+0.000, +0.00, +0.045]
                 goal_c = goal.copy() + [+0.035, +0.00, +0.01]
         elif self.n_objects == 5:
-            goal_a = goal.copy() + [+0.035, +0.00, +0.045]
-            goal_b = goal.copy() + [-0.035, +0.00, +0.045]
-            goal_c = goal.copy() + [-0.070, +0.00, +0.010]
-            goal_d = goal.copy() + [+0.000, +0.00, +0.010]
-            goal_e = goal.copy() + [+0.070, +0.00, +0.010]
-
-
+            comb = self.np_random.uniform(4,8) // 1
+            if comb == 0:       #horizontal ABC
+                goal_a = goal.copy() + [-0.10, +0.00, +0.00]
+                goal_b = goal.copy() + [-0.05, +0.00, +0.00]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_d = goal.copy() + [+0.05, +0.00, +0.00]
+                goal_e = goal.copy() + [+0.10, +0.00, +0.00]
+            elif comb == 1:     #horizontal CBA
+                goal_a = goal.copy() + [+0.10, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.05, +0.00, +0.00]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_d = goal.copy() + [-0.05, +0.00, +0.00]
+                goal_e = goal.copy() + [-0.10, +0.00, +0.00]
+            elif comb == 2:     #vertical ABC
+                goal_a = goal.copy() + [+0.00, +0.00, +0.20]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.15]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.10]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_e = goal.copy() + [+0.00, +0.00, +0.00]
+            elif comb == 3:     #vertical CBA
+                goal_a = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_c = goal.copy() + [+0.00, +0.00, +0.10]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.15]
+                goal_e = goal.copy() + [+0.00, +0.00, +0.20]
+            elif comb == 4:     #L
+                goal_a = goal.copy() + [+0.00, +0.00, +0.10] 
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05] 
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_d = goal.copy() + [+0.05, +0.00, +0.00]
+                goal_e = goal.copy() + [+0.10, +0.00, +0.00]
+            elif comb == 5:     #L 180
+                goal_a = goal.copy() + [-0.10, +0.00, +0.00] 
+                goal_b = goal.copy() + [-0.05, +0.00, +0.00] 
+                goal_c = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_e = goal.copy() + [+0.00, +0.00, +0.10]
+            elif comb == 6:     #T
+                goal_a = goal.copy() + [+0.00, +0.00, +0.10] 
+                goal_b = goal.copy() + [+0.00, +0.00, +0.05] 
+                goal_c = goal.copy() + [-0.05, +0.00, +0.00]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_e = goal.copy() + [+0.05, +0.00, +0.00]
+            elif comb == 7:     #T 180
+                goal_a = goal.copy() + [-0.05, +0.00, +0.00] 
+                goal_b = goal.copy() + [+0.00, +0.00, +0.00] 
+                goal_c = goal.copy() + [+0.05, +0.00, +0.00]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_e = goal.copy() + [+0.00, +0.00, +0.10]
+            elif comb == 8:     #M
+                goal_a = goal.copy() + [-0.070, +0.00, +0.010] 
+                goal_b = goal.copy() + [+0.000, +0.00, +0.010] 
+                goal_c = goal.copy() + [+0.070, +0.00, +0.010]
+                goal_d = goal.copy() + [+0.035, +0.00, +0.045]
+                goal_e = goal.copy() + [-0.035, +0.00, +0.045]
+            elif comb == 9:    #U 180
+                goal_a = goal.copy() + [-0.05, +0.00, +0.00] 
+                goal_b = goal.copy() + [-0.05, +0.00, +0.05] 
+                goal_c = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_d = goal.copy() + [+0.05, +0.00, +0.05]
+                goal_e = goal.copy() + [+0.05, +0.00, +0.00]
+            elif comb == 10:
+                goal_a = goal.copy() + [+0.05, +0.00, +0.10] 
+                goal_b = goal.copy() + [+0.05, +0.00, +0.05] 
+                goal_c = goal.copy() + [+0.00, +0.00, +0.05]
+                goal_d = goal.copy() + [+0.00, +0.00, +0.00]
+                goal_e = goal.copy() + [+0.05, +0.00, +0.00]
 
         goal_all.append(goal_a.copy())
         goal_all.append(goal_b.copy())
