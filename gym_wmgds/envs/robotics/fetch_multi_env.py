@@ -94,7 +94,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         action = action.copy()  # ensure that we don't change the action outside of this scope
         action_obj = action[4:]
         action_obj = action_obj.reshape(self.n_objects, -1)
-        
+
         pos_ctrl, gripper_ctrl = action[:3], action[3]
         obj_ctrl = np.concatenate((np.zeros((self.n_objects, 3)), 
                                     np.ones((self.n_objects, 1)), np.zeros((self.n_objects, 3))), axis=1)
@@ -287,12 +287,13 @@ class FetchMultiEnv(robot_env.RobotEnv):
 
     def _sample_goal(self):
 
+        obj_grp = self.max_n_objects if self.ai_object else 0
         if self.target_stacked:
             if self.change_stack_order:
-                object_order = np.random.permutation(self.n_objects)
+                object_order = np.random.permutation(self.n_objects) + obj_grp
             else:
-                object_order = np.arange(self.n_objects)
-            goal = self.sim.data.get_joint_qpos('object' + str(object_order[0]) + ':joint')[:3]
+                object_order = np.arange(self.n_objects) + obj_grp
+            goal = np.copy(self.sim.data.get_joint_qpos('object' + str(object_order[0]) + ':joint')[:3])
         else:
             object_order = np.arange(self.n_objects)
             goal = self.initial_gripper_xpos[:3] + self.np_random.uniform(-self.target_range, self.target_range, size=3)
@@ -307,7 +308,7 @@ class FetchMultiEnv(robot_env.RobotEnv):
         #<--this part is for creating different stacking objectives
         other_goals = []
         for i_object in np.argsort(object_order[1:]):
-            other_goal = self.sim.data.get_joint_qpos('object' + str(object_order[i_object]) + ':joint')[:3]
+            other_goal = np.copy(self.sim.data.get_joint_qpos('object' + str(object_order[i_object]) + ':joint')[:3])
             other_goal += self.target_offset
             other_goal[2] = self.height_offset
             if self.target_in_the_air and self.np_random.uniform() < 0.5:
@@ -394,5 +395,11 @@ class FetchMultiEnv(robot_env.RobotEnv):
 
     def deactivate_ai_object(self):
         utils.deactivate_weld_eqs(self.sim)
-        
+
+    def activate_selected_weld_eqs(self, index):
+        self.sim.model.eq_active[index] = 1
+
+    def deactivate_selected_weld_eqs(self, index):
+        self.sim.model.eq_active[index] = 0
+            
 
